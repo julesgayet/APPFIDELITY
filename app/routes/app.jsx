@@ -1,4 +1,3 @@
-/* global process */
 import {
   Link,
   Outlet,
@@ -6,7 +5,7 @@ import {
   useRouteError,
   isRouteErrorResponse,
 } from "react-router";
-import { AppProvider } from "@shopify/shopify-app-react-router/react";
+import ShopifyAppProvider from "../components/ShopifyAppProvider";
 import polarisStyles from "@shopify/polaris/build/esm/styles.css?url";
 import { authenticate, SHOPIFY_API_KEY } from "../shopify.server";
 
@@ -24,7 +23,7 @@ export default function App() {
   const { apiKey } = useLoaderData();
 
   return (
-    <AppProvider isEmbeddedApp apiKey={apiKey}>
+    <ShopifyAppProvider apiKey={apiKey}>
       <ui-nav-menu>
         <Link to="/app" rel="home">
           Accueil
@@ -32,7 +31,7 @@ export default function App() {
         <Link to="/app/settings">Configuration Fidélité</Link>
       </ui-nav-menu>
       <Outlet />
-    </AppProvider>
+    </ShopifyAppProvider>
   );
 }
 
@@ -51,7 +50,7 @@ export function ErrorBoundary() {
             ? error.message
             : "Erreur inconnue"}
       </p>
-      <Link to="/app">Retour à l'accueil</Link>
+      <Link to="/app"> Retour à l accueil </Link>
     </div>
   );
 }
