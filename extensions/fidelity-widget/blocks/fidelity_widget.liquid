@@ -1,0 +1,22 @@
+{% schema %}
+{
+  "name": "Fidelity Widget",
+  "target": "body",
+  "stylesheet": "widget.css",
+  "javascript": "widget.js",
+  "settings": []
+}
+{% endschema %}
+
+<!-- Conteneur racine où l'app Preact va s'afficher -->
+<div id="fidelity-widget-root" data-customer-id="{{ customer.id }}" data-shop-domain="{{ shop.permanent_domain }}"></div>
+
+<!-- Chargement de Preact et HTM depuis un CDN (pas besoin de npm build) -->
+<script type="module">
+  import { h, render } from 'https://unpkg.com/preact@10.19.3?module';
+  import htm from 'https://unpkg.com/htm@3.1.1?module';
+  
+  // Rend 'html' disponible globalement pour widget.js
+  window.html = htm.bind(h);
+  window.preactRender = render;
+</script>

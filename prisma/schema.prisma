@@ -1,0 +1,78 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // On utilise SQLite pour le développement local
+  provider = "sqlite"
+  url      = "file:dev.sqlite"
+}
+
+// --- Modèle Session (CORRIGÉ) ---
+// Contient les nouveaux champs requis par Shopify pour éviter l'erreur "Invalid prisma.session.upsert"
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+
+// --- Modèle Paramètres de la Boutique ---
+model ShopSettings {
+  id             String     @id @default(uuid())
+  shopDomain     String     @unique
+  pointsPerEuro  Int        @default(10)
+  isEnabled      Boolean    @default(true)
+  tiersEnabled   Boolean    @default(false)
+  customers      Customer[]
+  rewards        Reward[]
+}
+
+// --- Modèle Client ---
+model Customer {
+  id                String     @id @default(uuid())
+  shopifyCustomerId String
+  shopDomain        String
+  shop              ShopSettings @relation(fields: [shopDomain], references: [shopDomain])
+  pointsBalance     Int        @default(0)
+  totalSpent        Int        @default(0)
+  lastSpinDate      DateTime?
+  activities        Activity[]
+
+  @@unique([shopDomain, shopifyCustomerId])
+}
+
+// --- Modèle Récompense ---
+model Reward {
+  id            String       @id @default(uuid())
+  shopDomain    String
+  shop          ShopSettings @relation(fields: [shopDomain], references: [shopDomain])
+  title         String
+  cost          Int
+  discountType  String       // "FIXED_AMOUNT" ou "PERCENTAGE"
+  discountValue Decimal
+}
+
+// --- Modèle Activité (Historique) ---
+model Activity {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  type       String   // "EARN", "SPEND", "GAME"
+  points     Int
+  desc       String
+  createdAt  DateTime @default(now())
+}
