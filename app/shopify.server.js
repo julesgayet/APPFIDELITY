@@ -29,3 +29,5 @@ export const unauthenticated = shopify.unauthenticated;
 export const login = shopify.login;
 export const registerWebhooks = shopify.registerWebhooks;
 export const sessionStorage = shopify.sessionStorage;
+// Expose the API key for server-side imports (centralized config)
+export const SHOPIFY_API_KEY = process.env.SHOPIFY_API_KEY || "";
